@@ -24,12 +24,14 @@ import ae2.api.config.SortOrder;
 import ae2.api.config.ViewItems;
 import ae2.api.stacks.AEItemKey;
 import ae2.api.stacks.AEKey;
+import ae2.api.stacks.GenericStack;
 import ae2.client.gui.me.search.RepoSearch;
 import ae2.client.gui.widgets.IScrollSource;
 import ae2.client.gui.widgets.ISortSource;
 import ae2.container.me.common.GridInventoryEntry;
 import ae2.container.me.common.IClientRepo;
 import ae2.core.AELog;
+import ae2.me.IngredientsFlowGridCache.FlowRate;
 import ae2.util.prioritylist.IPartitionList;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -54,6 +56,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * For showing the network content of a storage channel, this class will maintain a client-side copy of the current
@@ -83,6 +86,7 @@ public class Repo implements IClientRepo {
     private final ObjectArrayList<GridInventoryEntry> craftingPinnedEntries = new ObjectArrayList<>();
     private final ObjectArrayList<GridInventoryEntry> playerPinnedEntries = new ObjectArrayList<>();
     private final Map<AEKey, PinnedKeys.PinReason> pinnedReasons = new Object2ObjectOpenHashMap<>();
+    private Map<GenericStack, FlowRate> flowRates = new WeakHashMap<>();
     /**
      * Entries by item ID to speed up ingredient matching.
      */
@@ -287,6 +291,10 @@ public class Repo implements IClientRepo {
         }
 
         if (viewMode == ViewItems.STORED && entry.storedAmount() == 0) {
+            return false;
+        }
+
+        if (viewMode == ViewItems.FLOWING && !this.flowRates.containsKey(new GenericStack(what, entry.storedAmount()))) {
             return false;
         }
 
@@ -619,6 +627,14 @@ public class Repo implements IClientRepo {
                 updateView(); // resort on unpause
             }
         }
+    }
+
+    public FlowRate getFlowRate(GenericStack stack) {
+        return this.flowRates.get(stack);
+    }
+
+    public void updateFlowRates(final Map<GenericStack, FlowRate> rates) {
+        this.flowRates = rates;
     }
 
     @Override

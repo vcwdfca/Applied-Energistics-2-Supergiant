@@ -284,6 +284,14 @@ public class AEConfig {
         return GENERAL.requireSneakForCableBlockingPanelPlacement;
     }
 
+    public boolean isEnableIngredientsFlowTracking() {
+        return GENERAL.enableIngredientsFlowTracking;
+    }
+
+    public int getIngredientsFlowTrackingWindowMinutes() {
+        return GENERAL.ingredientsFlowTrackingWindowMinutes;
+    }
+
     public boolean isEnableEffects() {
         return CLIENT.enableEffects;
     }
@@ -621,6 +629,14 @@ public class AEConfig {
         @Config.Name("requireSneakForCableBlockingPanelPlacement")
         @Config.Comment("If enabled, panel-type parts can only be placed on a cable side with an existing cable connection while sneaking.")
         public final boolean requireSneakForCableBlockingPanelPlacement = true;
+
+        @Config.Name("enableIngredientsFlowTracking")
+        @Config.Comment("")
+        public boolean enableIngredientsFlowTracking = true;
+
+        @Config.Name("ingredientsFlowTrackingWindowMinutes")
+        @Config.Comment("")
+        public int ingredientsFlowTrackingWindowMinutes = 2;
     }
 
     public static final class Debug {
