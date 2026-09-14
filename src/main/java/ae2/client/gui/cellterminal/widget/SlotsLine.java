@@ -27,7 +27,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.ItemStack;
 
 import java.awt.Rectangle;
 import java.util.Collections;
@@ -197,11 +196,11 @@ public class SlotsLine extends AbstractLine {
     }
 
     @Override
-    public ItemStack getHoveredItemStack(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible || !isHovered(mouseX, mouseY) || hoveredStack == null) {
-            return ItemStack.EMPTY;
+            return WidgetTooltip.EMPTY;
         }
-        return hoveredStack.what().wrapForDisplayOrFilter();
+        return WidgetTooltip.item(hoveredStack.what().wrapForDisplayOrFilter());
     }
 
     protected void drawContentSlots(int mouseX, int mouseY) {

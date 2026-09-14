@@ -362,7 +362,12 @@ public class GuiCraftConfirm extends AEBaseGui<ContainerCraftConfirm> implements
 
         List<ITextComponent> hoveredTooltip = this.table.getHoveredTooltip();
         if (hoveredTooltip != null) {
-            drawTooltipWithHeader(mouseX, mouseY, hoveredTooltip);
+            StackWithBounds hovered = this.table.getHoveredStack();
+            if (hovered != null) {
+                drawKeyTooltipWithImages(mouseX, mouseY, hovered.stack().what(), hoveredTooltip);
+            } else {
+                drawTooltipWithHeader(mouseX, mouseY, hoveredTooltip);
+            }
         }
 
         CraftingPlanSummary plan = container.getPlan();

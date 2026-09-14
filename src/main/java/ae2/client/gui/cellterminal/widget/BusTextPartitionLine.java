@@ -123,7 +123,7 @@ public class BusTextPartitionLine extends AbstractLine {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!this.textField.isMouseOver(this.guiLeft + mouseX, this.guiTop + mouseY)) {
             return super.getTooltip(mouseX, mouseY);
         }
@@ -133,6 +133,6 @@ public class BusTextPartitionLine extends AbstractLine {
             case "odBlack" -> GuiText.CellTerminalBusTextPartitionTooltipOdBlack.getLocal();
             default -> GuiText.CellTerminalBusTextPartitionTooltipMod.getLocal();
         });
-        return lines;
+        return WidgetTooltip.text(lines);
     }
 }

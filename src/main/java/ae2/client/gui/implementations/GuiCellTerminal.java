@@ -59,6 +59,7 @@ import ae2.client.gui.cellterminal.widget.StorageHeader;
 import ae2.client.gui.cellterminal.widget.SubnetHeader;
 import ae2.client.gui.cellterminal.widget.TempAreaHeader;
 import ae2.client.gui.cellterminal.widget.TerminalLine;
+import ae2.client.gui.cellterminal.widget.WidgetTooltip;
 import ae2.client.gui.me.common.KeyTypeSelectionWindow;
 import ae2.client.gui.me.items.GuiSetProcessingPatternAmount;
 import ae2.client.gui.me.items.WirelessUniversalTerminalSelectorWindow;
@@ -3263,22 +3264,15 @@ public class GuiCellTerminal extends AEBaseGui<ContainerCellTerminal> implements
             return;
         }
 
-        List<String> priorityTooltip = PriorityFieldManager.getInstance().getTooltip(mouseX, mouseY);
+        WidgetTooltip priorityTooltip = PriorityFieldManager.getInstance().getTooltip(mouseX, mouseY);
         if (!priorityTooltip.isEmpty()) {
-            drawTooltipLines(ItemStack.EMPTY, mouseX, mouseY, priorityTooltip);
+            drawWidgetTooltip(mouseX, mouseY, priorityTooltip);
             return;
         }
 
-        List<String> rowTooltip = this.rowList.getTooltip(localX, localY);
+        WidgetTooltip rowTooltip = this.rowList.getTooltip(localX, localY);
         if (!rowTooltip.isEmpty()) {
-            drawTooltipLines(ItemStack.EMPTY, mouseX, mouseY, rowTooltip);
-            return;
-        }
-
-        ItemStack hovered = this.rowList.getHoveredItemStack(localX, localY);
-        if (!hovered.isEmpty()) {
-            drawItemTooltipWithImages(mouseX, mouseY, hovered,
-                getCellTerminalHoveredItemTooltip(hovered, localX, localY));
+            drawWidgetTooltip(mouseX, mouseY, rowTooltip);
             return;
         }
 
@@ -3289,6 +3283,22 @@ public class GuiCellTerminal extends AEBaseGui<ContainerCellTerminal> implements
         }
 
         super.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    private void drawWidgetTooltip(int mouseX, int mouseY, WidgetTooltip tooltip) {
+        ItemStack stack = tooltip.stack();
+        if (stack.isEmpty()) {
+            drawTooltipLines(ItemStack.EMPTY, mouseX, mouseY, tooltip.lines());
+            return;
+        }
+        if (tooltip.lines().isEmpty()) {
+            drawItemTooltipWithImages(mouseX, mouseY, stack,
+                getCellTerminalHoveredItemTooltip(stack, mouseX - this.guiLeft, mouseY - this.guiTop));
+            return;
+        }
+        List<String> lines = new ObjectArrayList<>(getItemToolTip(stack));
+        lines.addAll(tooltip.lines());
+        drawItemTooltipWithImages(mouseX, mouseY, stack, lines);
     }
 
     private boolean isMouseOverSearchLayer(int mouseX, int mouseY, @Nullable SearchAssistLayout searchAssistLayout) {

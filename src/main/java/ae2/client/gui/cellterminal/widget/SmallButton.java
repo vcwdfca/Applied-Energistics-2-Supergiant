@@ -19,7 +19,6 @@
 package ae2.client.gui.cellterminal.widget;
 
 import java.util.Collections;
-import java.util.List;
 
 public class SmallButton extends AbstractWidget {
     private static final int SIZE = 8;
@@ -51,11 +50,11 @@ public class SmallButton extends AbstractWidget {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible || !isHovered(mouseX, mouseY)) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
         }
-        return Collections.singletonList(this.type.getTooltip());
+        return WidgetTooltip.text(Collections.singletonList(this.type.getTooltip()));
     }
 
     public ButtonType getType() {

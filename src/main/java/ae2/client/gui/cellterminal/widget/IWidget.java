@@ -18,11 +18,6 @@
 
 package ae2.client.gui.cellterminal.widget;
 
-import net.minecraft.item.ItemStack;
-
-import java.util.Collections;
-import java.util.List;
-
 public interface IWidget {
     void draw(int mouseX, int mouseY);
 
@@ -34,12 +29,8 @@ public interface IWidget {
 
     boolean isHovered(int mouseX, int mouseY);
 
-    default List<String> getTooltip(int mouseX, int mouseY) {
-        return Collections.emptyList();
-    }
-
-    default ItemStack getHoveredItemStack(int mouseX, int mouseY) {
-        return ItemStack.EMPTY;
+    default WidgetTooltip getTooltip(int mouseX, int mouseY) {
+        return WidgetTooltip.EMPTY;
     }
 
     int getX();

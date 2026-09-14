@@ -141,9 +141,16 @@ public class NetworkToolRowWidget extends AbstractWidget {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible || !isHovered(mouseX, mouseY)) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
+        }
+        ItemStack icon = iconSupplier != null ? iconSupplier.get() : ItemStack.EMPTY;
+        int iconX = x + PADDING + HELP_SIZE + 4;
+        int iconY = y + PADDING;
+        if (!icon.isEmpty() && mouseX >= iconX && mouseX < iconX + ICON_SIZE
+            && mouseY >= iconY && mouseY < iconY + ICON_SIZE) {
+            return WidgetTooltip.item(icon);
         }
         List<String> lines = new ObjectArrayList<>();
         String name = nameSupplier != null ? nameSupplier.get() : "";
@@ -153,14 +160,14 @@ public class NetworkToolRowWidget extends AbstractWidget {
             for (String line : helpLines) {
                 lines.add("§7" + line);
             }
-            return lines;
+            return WidgetTooltip.text(lines);
         }
         lines.add("§e" + name);
         if (!tooltipLines.isEmpty()) {
             lines.add("");
             lines.addAll(tooltipLines);
         }
-        return lines;
+        return WidgetTooltip.text(lines);
     }
 
     private boolean isRunUnderMouse(int mouseX, int mouseY) {

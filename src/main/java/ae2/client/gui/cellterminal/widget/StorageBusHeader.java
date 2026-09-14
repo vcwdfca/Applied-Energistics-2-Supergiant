@@ -21,8 +21,6 @@ package ae2.client.gui.cellterminal.widget;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderItem;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntSupplier;
 
@@ -118,9 +116,9 @@ public class StorageBusHeader extends StorageHeader {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible || !isHovered(mouseX, mouseY)) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
         }
         boolean supportsIOMode = supportsIOModeSupplier != null && supportsIOModeSupplier.getAsBoolean();
         if (supportsIOMode && ioModeButton.isHovered(mouseX, mouseY)) {

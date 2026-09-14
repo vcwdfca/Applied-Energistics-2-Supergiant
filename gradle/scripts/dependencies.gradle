@@ -71,4 +71,5 @@ dependencies {
 
     modRuntimeOnly("curse.maven:spark-361579:3542217")
     modRuntimeOnly 'curse.maven:thaumcraft-223628:2629023'
+    modRuntimeOnly 'curse.maven:itemzoom-261725:2643616'
 }

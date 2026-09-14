@@ -379,7 +379,8 @@ public class GuiAdvancedMemoryCard extends AEBaseGui<ContainerAdvancedMemoryCard
         AdvancedMemoryCardP2PEntry hovered = hoveredEntry(row);
         if (hovered != null) {
             if (isEntryNameHovered(hovered, row, localX, localY)) {
-                drawHoveringText(List.of(GuiText.AdvancedMemoryCardRenameHint.getLocal()), mouseX, mouseY);
+                drawTooltipLines(ItemStack.EMPTY, mouseX, mouseY,
+                    List.of(GuiText.AdvancedMemoryCardRenameHint.getLocal()));
                 return;
             }
             drawTooltipWithHeader(mouseX, mouseY, buildEntryTooltip(hovered));

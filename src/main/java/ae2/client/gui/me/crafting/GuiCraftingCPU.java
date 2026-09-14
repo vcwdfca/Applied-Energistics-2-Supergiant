@@ -191,8 +191,17 @@ public class GuiCraftingCPU<T extends ContainerCraftingCPU> extends AEBaseGui<T>
 
         List<ITextComponent> hoveredTooltip = this.table.getHoveredTooltip();
         if (hoveredTooltip != null) {
-            drawTooltipWithHeader(mouseX, mouseY, hoveredTooltip);
+            drawTableTooltip(mouseX, mouseY, hoveredTooltip);
         }
+    }
+
+    private void drawTableTooltip(int mouseX, int mouseY, List<ITextComponent> tooltip) {
+        StackWithBounds hovered = this.table.getHoveredStack();
+        if (hovered != null) {
+            drawKeyTooltipWithImages(mouseX, mouseY, hovered.stack().what(), tooltip);
+            return;
+        }
+        drawTooltipWithHeader(mouseX, mouseY, tooltip);
     }
 
     @Nullable

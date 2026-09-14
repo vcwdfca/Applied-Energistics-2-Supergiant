@@ -20,8 +20,6 @@ package ae2.client.gui.cellterminal.widget;
 
 import net.minecraft.client.gui.Gui;
 
-import java.util.Collections;
-import java.util.List;
 
 public abstract class AbstractLine extends AbstractWidget {
     protected static final int TREE_LINE_X = CellTerminalLayout.GUI_INDENT + 7;
@@ -105,13 +103,13 @@ public abstract class AbstractLine extends AbstractWidget {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible || !isHovered(mouseX, mouseY)) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
         }
         if (treeButton != null && treeButton.isHovered(mouseX, mouseY)) {
             return treeButton.getTooltip(mouseX, mouseY);
         }
-        return Collections.emptyList();
+        return WidgetTooltip.EMPTY;
     }
 }

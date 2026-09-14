@@ -27,7 +27,6 @@ import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -93,17 +92,17 @@ public class CardsDisplay extends AbstractWidget {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         CardEntry hovered = cardAt(mouseX, mouseY);
         if (hovered == null) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
         }
         List<String> lines = new ObjectArrayList<>();
         lines.add("§6" + hovered.stack().getDisplayName());
         lines.add("");
         lines.add("§b" + GuiText.CellTerminalUpgradeClickExtract.getLocal());
         lines.add("§b" + GuiText.CellTerminalUpgradeShiftClickInventory.getLocal());
-        return lines;
+        return WidgetTooltip.item(hovered.stack(), lines);
     }
 
     private CardEntry cardAt(int mouseX, int mouseY) {

@@ -30,7 +30,6 @@ import org.lwjgl.input.Keyboard;
 
 import java.awt.Rectangle;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -113,13 +112,13 @@ public final class PriorityFieldManager {
         return consumed;
     }
 
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         for (InlinePriorityField field : fields.values()) {
             if (field.isVisible() && field.isMouseOver(mouseX, mouseY)) {
-                return Collections.singletonList(GuiText.CellTerminalPriorityTooltip.getLocal());
+                return WidgetTooltip.text(Collections.singletonList(GuiText.CellTerminalPriorityTooltip.getLocal()));
             }
         }
-        return Collections.emptyList();
+        return WidgetTooltip.EMPTY;
     }
 
     public void unfocusAll() {

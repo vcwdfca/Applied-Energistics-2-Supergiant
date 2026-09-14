@@ -28,7 +28,6 @@ import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 
 public class TempAreaHeader extends AbstractHeader {
@@ -199,28 +198,17 @@ public class TempAreaHeader extends AbstractHeader {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible || !isHovered(mouseX, mouseY)) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
         }
         if (isSendButtonUnderMouse(mouseX, mouseY)) {
-            return Collections.singletonList(GuiText.CellTerminalTempAreaSendTooltip.getLocal());
-        }
-        return super.getTooltip(mouseX, mouseY);
-    }
-
-    @Override
-    public ItemStack getHoveredItemStack(int mouseX, int mouseY) {
-        if (!visible || !isHovered(mouseX, mouseY)) {
-            return ItemStack.EMPTY;
+            return WidgetTooltip.text(Collections.singletonList(GuiText.CellTerminalTempAreaSendTooltip.getLocal()));
         }
         if (isCellSlotUnderMouse(mouseX, mouseY)) {
-            ItemStack icon = iconSupplier != null ? iconSupplier.get() : ItemStack.EMPTY;
-            if (!icon.isEmpty()) {
-                return icon;
-            }
+            return WidgetTooltip.item(iconSupplier != null ? iconSupplier.get() : ItemStack.EMPTY);
         }
-        return ItemStack.EMPTY;
+        return super.getTooltip(mouseX, mouseY);
     }
 
     @FunctionalInterface

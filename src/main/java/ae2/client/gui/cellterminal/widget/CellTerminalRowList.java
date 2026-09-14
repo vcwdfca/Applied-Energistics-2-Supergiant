@@ -22,7 +22,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.item.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
@@ -223,32 +222,18 @@ public class CellTerminalRowList {
         return false;
     }
 
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         for (int i = visibleRows.size() - 1; i >= 0; i--) {
             IWidget widget = visibleRows.get(i);
             if (!widget.isHovered(mouseX, mouseY)) {
                 continue;
             }
-            List<String> tooltip = widget.getTooltip(mouseX, mouseY);
+            WidgetTooltip tooltip = widget.getTooltip(mouseX, mouseY);
             if (!tooltip.isEmpty()) {
                 return tooltip;
             }
         }
-        return Collections.emptyList();
-    }
-
-    public ItemStack getHoveredItemStack(int mouseX, int mouseY) {
-        for (int i = visibleRows.size() - 1; i >= 0; i--) {
-            IWidget widget = visibleRows.get(i);
-            if (!widget.isHovered(mouseX, mouseY)) {
-                continue;
-            }
-            ItemStack stack = widget.getHoveredItemStack(mouseX, mouseY);
-            if (!stack.isEmpty()) {
-                return stack;
-            }
-        }
-        return ItemStack.EMPTY;
+        return WidgetTooltip.EMPTY;
     }
 
     public Map<IWidget, Object> getWidgetDataMap() {

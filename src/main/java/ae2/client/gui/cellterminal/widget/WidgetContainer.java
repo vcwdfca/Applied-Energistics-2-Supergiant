@@ -19,7 +19,6 @@
 package ae2.client.gui.cellterminal.widget;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.item.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
@@ -90,38 +89,20 @@ public class WidgetContainer extends AbstractWidget {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
         }
         for (int i = children.size() - 1; i >= 0; i--) {
             IWidget child = children.get(i);
             if (!child.isVisible() || !child.isHovered(mouseX, mouseY)) {
                 continue;
             }
-            List<String> tooltip = child.getTooltip(mouseX, mouseY);
+            WidgetTooltip tooltip = child.getTooltip(mouseX, mouseY);
             if (!tooltip.isEmpty()) {
                 return tooltip;
             }
         }
-        return Collections.emptyList();
-    }
-
-    @Override
-    public ItemStack getHoveredItemStack(int mouseX, int mouseY) {
-        if (!visible) {
-            return ItemStack.EMPTY;
-        }
-        for (int i = children.size() - 1; i >= 0; i--) {
-            IWidget child = children.get(i);
-            if (!child.isVisible() || !child.isHovered(mouseX, mouseY)) {
-                continue;
-            }
-            ItemStack stack = child.getHoveredItemStack(mouseX, mouseY);
-            if (!stack.isEmpty()) {
-                return stack;
-            }
-        }
-        return ItemStack.EMPTY;
+        return WidgetTooltip.EMPTY;
     }
 }

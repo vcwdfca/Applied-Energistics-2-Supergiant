@@ -219,27 +219,27 @@ public class SubnetHeader extends AbstractHeader {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible || !isHovered(mouseX, mouseY)) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
         }
         if (isStarUnderMouse(mouseX, mouseY)) {
-            return Collections.singletonList(GuiText.CellTerminalSubnetStar.getLocal());
+            return WidgetTooltip.text(Collections.singletonList(GuiText.CellTerminalSubnetStar.getLocal()));
         }
         if (isMain) {
             if (this.mainTooltipSupplier != null) {
-                return this.mainTooltipSupplier.get();
+                return WidgetTooltip.text(this.mainTooltipSupplier.get());
             }
-            return Collections.singletonList(GuiText.CellTerminalSubnetMainNetwork.getLocal());
+            return WidgetTooltip.text(Collections.singletonList(GuiText.CellTerminalSubnetMainNetwork.getLocal()));
         }
         if (isLoadButtonUnderMouse(mouseX, mouseY)) {
-            return getLoadButtonTooltip();
+            return WidgetTooltip.text(getLoadButtonTooltip());
         }
         if (arrowHovered && directionSupplier != null) {
-            return getDirectionTooltip();
+            return WidgetTooltip.text(getDirectionTooltip());
         }
         if (this.headerTooltipSupplier != null) {
-            return this.headerTooltipSupplier.get();
+            return WidgetTooltip.text(this.headerTooltipSupplier.get());
         }
         return super.getTooltip(mouseX, mouseY);
     }

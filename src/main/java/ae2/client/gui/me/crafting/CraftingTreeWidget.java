@@ -1322,9 +1322,13 @@ public class CraftingTreeWidget implements ICompositeWidget {
             if (screen == null) {
                 return new Tooltip(List.of());
             }
+            List<String> itemTooltip;
             GuiUtils.preItemToolTip(definition);
-
-            List<String> itemTooltip = screen.getItemToolTip(definition);
+            try {
+                itemTooltip = screen.getItemToolTip(definition);
+            } finally {
+                GuiUtils.postItemToolTip();
+            }
             List<ITextComponent> lines = new ObjectArrayList<>(itemTooltip.size() + 4);
             for (String line : itemTooltip) {
                 lines.add(new TextComponentString(line));

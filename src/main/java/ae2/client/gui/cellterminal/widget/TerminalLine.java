@@ -26,7 +26,6 @@ import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -115,39 +114,28 @@ public class TerminalLine extends AbstractLine {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible || !isHovered(mouseX, mouseY)) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
         }
         if (cardsDisplay != null && cardsDisplay.isHovered(mouseX, mouseY)) {
             return cardsDisplay.getTooltip(mouseX, mouseY);
         }
         if (isButtonHovered(mouseX, mouseY, CellTerminalLayout.BUTTON_EJECT_X)) {
-            return Collections.singletonList(GuiText.CellTerminalActionEject.getLocal());
+            return WidgetTooltip.text(Collections.singletonList(GuiText.CellTerminalActionEject.getLocal()));
         }
         if (isButtonHovered(mouseX, mouseY, CellTerminalLayout.BUTTON_INVENTORY_X)) {
-            return Collections.singletonList(GuiText.CellTerminalActionInventory.getLocal());
+            return WidgetTooltip.text(Collections.singletonList(GuiText.CellTerminalActionInventory.getLocal()));
         }
         if (isButtonHovered(mouseX, mouseY, CellTerminalLayout.BUTTON_PARTITION_X)) {
-            return Collections.singletonList(GuiText.CellTerminalActionPartition.getLocal());
-        }
-        return Collections.emptyList();
-    }
-
-    @Override
-    public ItemStack getHoveredItemStack(int mouseX, int mouseY) {
-        if (!visible || !isHovered(mouseX, mouseY)) {
-            return ItemStack.EMPTY;
+            return WidgetTooltip.text(Collections.singletonList(GuiText.CellTerminalActionPartition.getLocal()));
         }
         int cellX = CellTerminalLayout.CELL_INDENT;
         if (mouseX >= cellX && mouseX < cellX + CellTerminalLayout.MINI_SLOT_SIZE
             && mouseY >= y && mouseY < y + CellTerminalLayout.MINI_SLOT_SIZE) {
-            ItemStack cellItem = cellItemSupplier != null ? cellItemSupplier.get() : ItemStack.EMPTY;
-            if (!cellItem.isEmpty()) {
-                return cellItem;
-            }
+            return WidgetTooltip.item(cellItemSupplier != null ? cellItemSupplier.get() : ItemStack.EMPTY);
         }
-        return ItemStack.EMPTY;
+        return WidgetTooltip.EMPTY;
     }
 
     private void drawCellName() {

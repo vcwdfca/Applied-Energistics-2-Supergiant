@@ -23,8 +23,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -108,9 +106,9 @@ public class CellSlotsLine extends SlotsLine {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible || !isHovered(mouseX, mouseY)) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
         }
         if (treeButton != null && treeButton.isHovered(mouseX, mouseY)) {
             return treeButton.getTooltip(mouseX, mouseY);
@@ -118,21 +116,12 @@ public class CellSlotsLine extends SlotsLine {
         if (cardsDisplay != null && cardsDisplay.isHovered(mouseX, mouseY)) {
             return cardsDisplay.getTooltip(mouseX, mouseY);
         }
-        return Collections.emptyList();
-    }
-
-    @Override
-    public ItemStack getHoveredItemStack(int mouseX, int mouseY) {
-        if (!visible || !isHovered(mouseX, mouseY)) {
-            return ItemStack.EMPTY;
-        }
         if (cellSlotHovered) {
             ItemStack cellItem = cellItemSupplier != null ? cellItemSupplier.get() : ItemStack.EMPTY;
-            if (!cellItem.isEmpty()) {
-                return cellItem;
-            }
+            return WidgetTooltip.item(cellItem);
         }
-        return hoveredStack != null ? hoveredStack.what().wrapForDisplayOrFilter() : ItemStack.EMPTY;
+        return hoveredStack != null ? WidgetTooltip.item(hoveredStack.what().wrapForDisplayOrFilter())
+            : WidgetTooltip.EMPTY;
     }
 
     private void drawCellSlot(int mouseX, int mouseY) {

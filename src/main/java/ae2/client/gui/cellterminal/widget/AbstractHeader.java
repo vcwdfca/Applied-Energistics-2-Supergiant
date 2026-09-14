@@ -23,8 +23,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -227,30 +225,19 @@ public abstract class AbstractHeader extends AbstractWidget {
     }
 
     @Override
-    public List<String> getTooltip(int mouseX, int mouseY) {
+    public WidgetTooltip getTooltip(int mouseX, int mouseY) {
         if (!visible || !isHovered(mouseX, mouseY)) {
-            return Collections.emptyList();
+            return WidgetTooltip.EMPTY;
         }
         if (cardsDisplay != null && cardsDisplay.isHovered(mouseX, mouseY)) {
             return cardsDisplay.getTooltip(mouseX, mouseY);
         }
-        return Collections.emptyList();
-    }
-
-    @Override
-    public ItemStack getHoveredItemStack(int mouseX, int mouseY) {
-        if (!visible || !isHovered(mouseX, mouseY)) {
-            return ItemStack.EMPTY;
-        }
         int iconX = CellTerminalLayout.GUI_INDENT;
         if (mouseX >= iconX && mouseX < iconX + CellTerminalLayout.MINI_SLOT_SIZE
             && mouseY >= y && mouseY < y + CellTerminalLayout.MINI_SLOT_SIZE) {
-            ItemStack icon = iconSupplier != null ? iconSupplier.get() : ItemStack.EMPTY;
-            if (!icon.isEmpty()) {
-                return icon;
-            }
+            return WidgetTooltip.item(iconSupplier != null ? iconSupplier.get() : ItemStack.EMPTY);
         }
-        return ItemStack.EMPTY;
+        return WidgetTooltip.EMPTY;
     }
 
     protected String trimTextToWidth(String text, int maxWidth) {

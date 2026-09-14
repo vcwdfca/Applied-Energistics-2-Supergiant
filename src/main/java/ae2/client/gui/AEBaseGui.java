@@ -704,19 +704,21 @@ public abstract class AEBaseGui<T extends AEBaseContainer> extends GuiContainer 
         GlStateManager.pushMatrix();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
         GlStateManager.translate(0.0F, 0.0F, TOOLTIP_Z_LEVEL);
+        // Tooltip listeners render item models with Forge's conventions, so keep a zero z baseline and depth enabled.
+        float previousItemZLevel = this.itemRender.zLevel;
+        this.itemRender.zLevel = 0.0F;
         this.zLevel = TOOLTIP_Z_LEVEL;
-        this.itemRender.zLevel = TOOLTIP_Z_LEVEL;
         try {
             GuiUtils.preItemToolTip(tooltipStack);
             try {
+                GlStateManager.enableDepth();
                 drawHoveringText(tooltip, mouseX, mouseY);
             } finally {
                 GuiUtils.postItemToolTip();
             }
         } finally {
-            this.itemRender.zLevel = 0.0F;
+            this.itemRender.zLevel = previousItemZLevel;
             this.zLevel = 0.0F;
             GlStateManager.enableDepth();
             GlStateManager.enableLighting();
