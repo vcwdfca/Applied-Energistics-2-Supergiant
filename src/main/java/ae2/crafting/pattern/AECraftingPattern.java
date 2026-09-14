@@ -10,6 +10,7 @@ import ae2.api.stacks.AEKeyType;
 import ae2.api.stacks.GenericStack;
 import ae2.api.stacks.KeyCounter;
 import ae2.core.localization.GuiText;
+import ae2.crafting.CraftingEventSimulation;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -344,6 +345,11 @@ public class AECraftingPattern implements IAssemblerPattern {
         }
 
         var testOutput = recipe.getCraftingResult(testFrame);
+        try {
+            testOutput = CraftingEventSimulation.processCraftingResult(testOutput, testFrame, level);
+        } catch (RuntimeException e) {
+            return false;
+        }
         return !testOutput.isEmpty() && ItemStack.areItemStacksEqual(output, testOutput);
     }
 
@@ -400,7 +406,12 @@ public class AECraftingPattern implements IAssemblerPattern {
                     }
                 }
             }
-            return recipe.getCraftingResult(adjustedInput);
+            var result = recipe.getCraftingResult(adjustedInput);
+            try {
+                return CraftingEventSimulation.processCraftingResult(result, adjustedInput, level);
+            } catch (RuntimeException e) {
+                return ItemStack.EMPTY;
+            }
         }
 
         for (int i = 0; i < sparseInputs.size(); i++) {

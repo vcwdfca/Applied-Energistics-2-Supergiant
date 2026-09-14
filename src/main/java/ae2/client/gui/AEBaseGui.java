@@ -92,6 +92,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -106,6 +107,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.RandomAccess;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -1215,16 +1217,36 @@ public abstract class AEBaseGui<T extends AEBaseContainer> extends GuiContainer 
 
     @Nullable
     private GuiTextField findTextFieldAt(int mouseX, int mouseY) {
-        for (GuiTextField textField : this.widgets.getTextFields()) {
-            if (isClickedTextField(textField, mouseX, mouseY)) {
-                return textField;
+        var l = this.widgets.getTextFields();
+        if (l instanceof RandomAccess && l instanceof List<? extends GuiTextField> list) {
+            for (var i = 0; i < list.size(); i++) {
+                var textField = list.get(i);
+                if (isClickedTextField(textField, mouseX, mouseY)) {
+                    return textField;
+                }
+            }
+        } else if (!l.isEmpty()) {
+            for (var textField : l) {
+                if (isClickedTextField(textField, mouseX, mouseY)) {
+                    return textField;
+                }
             }
         }
 
         if (this instanceof ITextFieldGui textFieldGui) {
-            for (GuiTextField textField : textFieldGui.getTextFields()) {
-                if (isClickedTextField(textField, mouseX, mouseY)) {
-                    return textField;
+            l = textFieldGui.getTextFields();
+            if (l instanceof RandomAccess && l instanceof List<? extends GuiTextField> list) {
+                for (var i = 0; i < list.size(); i++) {
+                    var textField = list.get(i);
+                    if (isClickedTextField(textField, mouseX, mouseY)) {
+                        return textField;
+                    }
+                }
+            } else if (!l.isEmpty()) {
+                for (var textField : l) {
+                    if (isClickedTextField(textField, mouseX, mouseY)) {
+                        return textField;
+                    }
                 }
             }
         }
@@ -1717,6 +1739,7 @@ public abstract class AEBaseGui<T extends AEBaseContainer> extends GuiContainer 
     }
 
     @SuppressWarnings("unused")
+    @NotNull
     public Collection<? extends Slot> getHEISlots(Object ingredient) {
         return container.inventorySlots;
     }
@@ -1731,21 +1754,46 @@ public abstract class AEBaseGui<T extends AEBaseContainer> extends GuiContainer 
             return targets;
         }
 
-        for (var slot : getHEISlots(ingredient)) {
-            if (!(slot instanceof FakeSlot fakeSlot) || !fakeSlot.isEnabled()) {
-                continue;
-            }
+        var slots = getHEISlots(ingredient);
+        if (slots instanceof RandomAccess && slots instanceof List<? extends Slot> list) {
+            for (var i = 0; i < list.size(); i++) {
+                var slot = list.get(i);
+                if (!(slot instanceof FakeSlot fakeSlot) || !fakeSlot.isEnabled()) {
+                    continue;
+                }
 
-            ItemStack stack = HeiGhostTargetSupport.toFilterStack(fakeSlot, ingredient);
-            if (!stack.isEmpty()) {
-                targets.add(new FakeSlotTarget<>(this, fakeSlot));
+                ItemStack stack = HeiGhostTargetSupport.toFilterStack(fakeSlot, ingredient);
+                if (!stack.isEmpty()) {
+                    targets.add(new FakeSlotTarget<>(this, fakeSlot));
+                }
+            }
+        } else if (!slots.isEmpty()) {
+            for (var slot : slots) {
+                if (!(slot instanceof FakeSlot fakeSlot) || !fakeSlot.isEnabled()) {
+                    continue;
+                }
+
+                ItemStack stack = HeiGhostTargetSupport.toFilterStack(fakeSlot, ingredient);
+                if (!stack.isEmpty()) {
+                    targets.add(new FakeSlotTarget<>(this, fakeSlot));
+                }
             }
         }
 
         if (this instanceof ITextFieldGui textFieldGui) {
-            for (var field : textFieldGui.getTextFields()) {
-                if (field.getVisible()) {
-                    targets.add(new TextFieldTarget<>(this, field));
+            var l = textFieldGui.getTextFields();
+            if (l instanceof RandomAccess && l instanceof List<? extends GuiTextField> list) {
+                for (var i = 0; i < list.size(); i++) {
+                    var field = list.get(i);
+                    if (field.getVisible()) {
+                        targets.add(new TextFieldTarget<>(this, field));
+                    }
+                }
+            } else if (!l.isEmpty()) {
+                for (var field : l) {
+                    if (field.getVisible()) {
+                        targets.add(new TextFieldTarget<>(this, field));
+                    }
                 }
             }
         }

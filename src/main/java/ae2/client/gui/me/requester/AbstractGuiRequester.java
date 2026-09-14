@@ -39,6 +39,8 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.RandomAccess;
 
 public abstract class AbstractGuiRequester<C extends AbstractContainerRequester> extends AEBaseGui<C>
     implements RequesterDisplay {
@@ -401,13 +403,29 @@ public abstract class AbstractGuiRequester<C extends AbstractContainerRequester>
     }
 
     private void clearRegisteredTextFieldFocus() {
-        for (GuiTextField textField : this.widgets.getTextFields()) {
-            textField.setFocused(false);
+        var l = this.widgets.getTextFields();
+        if (l instanceof RandomAccess && l instanceof List<? extends GuiTextField> list) {
+            for (var i = 0; i < list.size(); i++) {
+                var textField = list.get(i);
+                textField.setFocused(false);
+            }
+        } else if (!l.isEmpty()) {
+            for (var textField : l) {
+                textField.setFocused(false);
+            }
         }
 
         if (this instanceof ITextFieldGui textFieldGui) {
-            for (GuiTextField textField : textFieldGui.getTextFields()) {
-                textField.setFocused(false);
+            l = textFieldGui.getTextFields();
+            if (l instanceof RandomAccess && l instanceof List<? extends GuiTextField> list) {
+                for (var i = 0; i < list.size(); i++) {
+                    var textField = list.get(i);
+                    textField.setFocused(false);
+                }
+            } else if (!l.isEmpty()) {
+                for (var textField : l) {
+                    textField.setFocused(false);
+                }
             }
         }
     }

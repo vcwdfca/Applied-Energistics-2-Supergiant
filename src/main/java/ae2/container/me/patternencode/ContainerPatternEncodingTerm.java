@@ -33,6 +33,7 @@ import ae2.core.network.NetworkPacketHelper;
 import ae2.core.network.clientbound.ProviderDirectoryPagePacket;
 import ae2.core.network.clientbound.ProviderMappingPagePacket;
 import ae2.core.worlddata.PatternProviderMappingData;
+import ae2.crafting.CraftingEventSimulation;
 import ae2.crafting.pattern.AECraftingPattern;
 import ae2.crafting.pattern.AEProcessingPattern;
 import ae2.helpers.IPatternTerminalGuiHost;
@@ -47,6 +48,7 @@ import ae2.util.inv.FilteredInternalInventory;
 import ae2.util.inv.filter.IAEItemFilter;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.shorts.ShortSet;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -646,7 +648,7 @@ public class ContainerPatternEncodingTerm extends ContainerMEStorage
             this.recipeCandidatesRevision++;
             RecipeSelection.Selection selection = RecipeSelection.findFirstCandidateAndConflict(this.craftingInventory,
                 this.getPlayer().world, this.selectedRecipeId);
-            RecipeSelection.Candidate selected = selection.candidate();
+            RecipeSelection.Candidate selected = simulateCandidateOutput(selection.candidate());
             IRecipe previousRecipe = this.currentRecipe;
             this.currentRecipe = selected == null ? null : selected.recipe();
             this.selectedRecipeId = selected == null ? null : selected.id();
@@ -780,8 +782,43 @@ public class ContainerPatternEncodingTerm extends ContainerMEStorage
         for (int i = 0; i < ingredients.length; i++) {
             craftingInventory.setInventorySlotContents(i, ingredients[i]);
         }
-        this.recipeCandidates = RecipeSelection.findCandidates(craftingInventory, this.getPlayer().world);
+        this.recipeCandidates = simulateCandidateOutputs(
+            RecipeSelection.findCandidates(craftingInventory, this.getPlayer().world), craftingInventory,
+            this.getPlayer().world);
         this.recipeCandidatesInitialized = true;
+    }
+
+    /**
+     * Runs the crafting-event simulation over a candidate's output so the displayed preview matches what gets
+     * baked into the encoded pattern. Returns null when the recipe depends on real player context (dimension or
+     * position) and therefore cannot be encoded.
+     */
+    @Nullable
+    private RecipeSelection.Candidate simulateCandidateOutput(@Nullable RecipeSelection.Candidate candidate) {
+        if (candidate == null) {
+            return null;
+        }
+        try {
+            var output = CraftingEventSimulation.processCraftingResult(candidate.output(), this.craftingInventory,
+                this.getPlayer().world);
+            return new RecipeSelection.Candidate(candidate.id(), candidate.recipe(), output);
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    private static List<RecipeSelection.Candidate> simulateCandidateOutputs(List<RecipeSelection.Candidate> candidates,
+                                                                            InventoryCrafting input, World world) {
+        var processed = new ObjectArrayList<RecipeSelection.Candidate>(candidates.size());
+        for (var candidate : candidates) {
+            try {
+                processed.add(new RecipeSelection.Candidate(candidate.id(), candidate.recipe(),
+                    CraftingEventSimulation.processCraftingResult(candidate.output(), input, world)));
+            } catch (RuntimeException ignored) {
+                // Recipe depends on real player context (position/dimension) and cannot be encoded.
+            }
+        }
+        return processed;
     }
 
     public boolean hasRecipeConflict() {
