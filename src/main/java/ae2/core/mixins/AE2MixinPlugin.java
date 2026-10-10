@@ -29,8 +29,14 @@ public class AE2MixinPlugin implements IMixinConfigPlugin {
         "ae2.mixins.hei.MixinLeftAreaDispatcher");
 
     private final boolean JEI_PRESENT = CleanroomModDiscoverer.instance().isModPresent("jei");
-    private final boolean HEI_PRESENT = isClassPresent("mezz.jei.gui.navigation.NavigationLayout");
+    private Boolean HEI_PRESENT;
 
+    public boolean heiPresent() {
+        if (!HEI_PRESENT) {
+            HEI_PRESENT = isClassPresent("mezz.jei.gui.navigation.NavigationLayout");
+        }
+        return HEI_PRESENT;
+    }
     /**
      * Checks whether a class is on the classpath, without loading it. Mixins are applied long before mod classes may
      * be touched, so a lookup of the class file is all that can be done here.
@@ -63,9 +69,9 @@ public class AE2MixinPlugin implements IMixinConfigPlugin {
             return false;
         }
         if (PLAIN_JEI_ONLY_MIXINS.contains(mixinClassName)) {
-            return !HEI_PRESENT;
+            return !heiPresent();
         }
-        return !HEI_ONLY_MIXINS.contains(mixinClassName) || HEI_PRESENT;
+        return !HEI_ONLY_MIXINS.contains(mixinClassName) || heiPresent();
     }
 
     @Override
